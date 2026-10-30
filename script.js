@@ -1,7 +1,3 @@
-/* ============================================================
-   Термопаст.рф — Логика каталога, корзины и форм
-   ============================================================ */
-
 let products = [];
 let categories = [];
 let cart = [];
@@ -24,7 +20,7 @@ async function loadData() {
     renderCatalog('all');
   } catch (err) {
     console.error(err);
-    document.getElementById('catalog-list').innerHTML = '<p class="empty">Ошибка загрузки каталога. Проверьте наличие файла data/products.json.</p>';
+    document.getElementById('catalog-list').innerHTML = '<p class="empty">Ошибка загрузки каталога.</p>';
   }
 }
 
@@ -184,13 +180,11 @@ function openOrderModal(type, productId = null) {
   const submitBtn = document.getElementById('submit-btn');
   const agreeCheckbox = document.getElementById('agree');
 
-  // Сброс формы
+  // Сброс формы и чекбокса
   document.getElementById('form-success').hidden = true;
   document.getElementById('order-form').reset();
   document.getElementById('cart_items_hidden').value = '';
   productInfoBlock.hidden = true;
-  
-  // Кнопка заблокирована до согласия
   if (submitBtn) submitBtn.disabled = true;
   if (agreeCheckbox) agreeCheckbox.checked = false;
 
@@ -201,7 +195,6 @@ function openOrderModal(type, productId = null) {
     extraFieldsGroup.style.display = 'block';
     orderTypeInput.value = 'Заказ из корзины';
     
-    // Заполняем скрытое поле
     const itemsText = cart.map(item => `• ${item.name} — ${item.price.toLocaleString('ru-RU')} ₽`).join('\n');
     const total = cart.reduce((sum, item) => sum + item.price, 0);
     document.getElementById('cart_items_hidden').value = `${itemsText}\n\nИтого: ${total.toLocaleString('ru-RU')} ₽`;
@@ -226,6 +219,7 @@ function openOrderModal(type, productId = null) {
     const p = products.find(prod => prod.id === Number(productId));
     title.textContent = 'Вопрос по сборке';
     subtitle.textContent = 'Мы свяжемся с вами для консультации.';
+    // Скрываем доставку и лишние поля, так как это просто вопрос
     deliveryGroup.style.display = 'none'; 
     extraFieldsGroup.style.display = 'none'; 
     orderTypeInput.value = `Вопрос по сборке: ${p.name}`;
@@ -233,6 +227,7 @@ function openOrderModal(type, productId = null) {
     productInfoBlock.hidden = false;
     productNameSpan.textContent = p.name;
     
+    // Записываем сборку в скрытое поле
     document.getElementById('cart_items_hidden').value = `Интересует сборка: ${p.name}\nЦена: ${p.price.toLocaleString('ru-RU')} ₽`;
   }
 
@@ -250,24 +245,15 @@ document.getElementById('order-modal').addEventListener('click', function(e) {
 });
 
 /* ============================================================
-   ОТПРАВКА ФОРМЫ (Классическая, без AJAX)
+   ОТПРАВКА ФОРМЫ
    ============================================================ */
 const orderForm = document.getElementById('order-form');
 if (orderForm) {
   orderForm.addEventListener('submit', function(e) {
-    // НЕ отменяем стандартное поведение (без e.preventDefault())
-    // Браузер отправит форму на Formspree, и пользователь попадет на их страницу "Спасибо".
-    
+    // МЫ УБРАЛИ e.preventDefault(), чтобы форма уходила напрямую
     const submitBtn = orderForm.querySelector('.submit-btn');
     submitBtn.textContent = 'Отправка...';
     submitBtn.disabled = true;
-
-    // На всякий случай еще раз обновляем состав корзины перед отправкой
-    if (cart.length > 0 && document.getElementById('order_type').value === 'Заказ из корзины') {
-      const itemsText = cart.map(item => `• ${item.name} — ${item.price.toLocaleString('ru-RU')} ₽`).join('\n');
-      const total = cart.reduce((sum, item) => sum + item.price, 0);
-      document.getElementById('cart_items_hidden').value = `${itemsText}\n\nИтого: ${total.toLocaleString('ru-RU')} ₽`;
-    }
   });
 }
 
