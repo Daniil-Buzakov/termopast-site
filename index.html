@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Термопаст.рф — Сборки компьютеров</title>
+  <meta name="description" content="Готовые сборки ПК и индивидуальный подбор. Игровые и рабочие компьютеры от Термопаст.рф. Гарантия 12 месяцев.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@800;900&family=TikTok+Sans:wght@300&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="header-top">
+      <a href="index.html" class="logo-link">
+        <img src="logo-icon.png" alt="Термопаст.рф" class="logo-img">
+        <span class="logo-text">Термопаст.рф</span>
+      </a>
+
+      <nav class="header-nav">
+        <a href="#catalog">Сборки</a>
+        <a href="#about">О нас</a>
+        <a href="#warranty">Гарантия и сервис</a>
+      </nav>
+
+      <div class="header-contacts">
+        <a href="tel:+79141623245" class="phone-link">+7 (914) 162-32-45</a>
+        <a href="https://t.me/termopast_rf" target="_blank" class="messenger-link">Telegram</a>
+        <div class="cart-icon" onclick="toggleCart()">
+          🛒 Корзина <span id="cart-count">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== HERO + УТП ===== -->
+  <div class="main-showcase">
+    <div class="hero-utp">
+      <h1>Соберем ПК мечты под ваш бюджет за 2 дня</h1>
+      <p>Каждый компьютер проходит 24-часовой стресс-тест перед отправкой. Мы не перепродаем — мы собираем.</p>
+      
+      <div class="trust-badges">
+        <span class="badge-item">Гарантия 12 мес</span>
+        <span class="badge-item">Оплата при получении</span>
+        <span class="badge-item">Бесплатная доставка по городу</span>
+      </div>
+
+      <button class="banner-btn" onclick="openOrderModal('custom')">Подобрать ПК</button>
+    </div>
+
+    <div class="custom-build-banner">
+      <div class="banner-container">
+        <div class="banner-image">
+          <img src="ПКвопрос.png" alt="Сборка ПК на заказ" onerror="this.src='https://via.placeholder.com/600x400/1e2430/2ee6ff?text=PC+Question'">
+        </div>
+        <div class="banner-content-right">
+          <h2>Хочу сборку на заказ</h2>
+          <p>Не нашли подходящую готовую сборку? Мы соберем системный блок под ваши конкретные задачи, бюджет и эстетические предпочтения.</p>
+          <p>Поможем подобрать комплектующие, соберем, установим Windows и настроим всё для идеального старта.</p>
+          <button class="banner-btn" onclick="openOrderModal('custom')">Собрать на заказ</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-inner">
+        <h2>Готовые решения</h2>
+        <p>Выберите готовый ПК из нашего каталога. Все сборки проверены и готовы к работе.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== КАТАЛОГ ===== -->
+  <main id="catalog">
+    <div id="filters" class="filters"></div>
+    <div id="catalog-list"></div>
+  </main>
+
+  <!-- ===== ПОЧЕМУ МЫ ===== -->
+  <section class="why-us" id="about">
+    <h2 class="section-title">Почему выбирают нас</h2>
+    <div class="why-grid">
+      <div class="why-card">
+        <h3>Люди, а не склад</h3>
+        <p>Мы не просто перепродаем коробки. За каждым ПК стоит наша работа, опыт и репутация.</p>
+      </div>
+      <div class="why-card">
+        <h3>Прозрачность</h3>
+        <p>Покажем фото сборки перед отправкой. Все чеки на комплектующие прилагаются.</p>
+      </div>
+      <div class="why-card">
+        <h3>Скорость и качество</h3>
+        <p>Сборка от 1 до 3 дней. Каждый ПК проходит 24-часовой стресс-тест.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ЭТАПЫ РАБОТЫ ===== -->
+  <section class="how-we-build">
+    <div class="how-container">
+      <div class="how-text">
+        <h2 class="section-title" style="text-align: left;">Этапы<br>Работы</h2>
+        <div class="steps-list">
+          <div class="step-item">
+            <h4><span>/ 01</span> Подбор и концепт</h4>
+            <p>Изучаем задачи, подбираем идеальную связку комплектующих. Создаем визуальный концепт, подчеркивающий стиль и мощь системы.</p>
+          </div>
+          <div class="step-item">
+            <h4><span>/ 02</span> Сборка и укладка</h4>
+            <p>Безупречный кабель-менеджмент, правильное распределение термопасты и установка кастомных систем охлаждения.</p>
+          </div>
+          <div class="step-item">
+            <h4><span>/ 03</span> Настройка и тесты</h4>
+            <p>Настраиваем BIOS, тайминги памяти, кривые вентиляторов и прогоняем ПК через тяжелые стресс-тесты.</p>
+          </div>
+        </div>
+      </div>
+      <div class="how-image">
+        <!-- Ваше фото процесса сборки -->
+        <img src="stage-build.png" alt="Сборка ПК" onerror="this.src='https://via.placeholder.com/600x800/161a22/2ee6ff?text=Добавьте+stage-build.jpg'">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ГАРАНТИЯ ===== -->
+  <section class="warranty-section" id="warranty">
+    <div class="warranty-container">
+      <div class="warranty-image">
+        <!-- Ваше фото сервиса/гарантии -->
+        <img src="warranty-photo.png" alt="Гарантия и сервис" onerror="this.src='https://via.placeholder.com/600x800/161a22/2ee6ff?text=Добавьте+warranty-photo.jpg'">
+      </div>
+      <div class="warranty-content">
+        <h2 class="section-title" style="text-align: left;">Гарантия и сервис</h2>
+        <p>Мы даем <strong>12 месяцев гарантии</strong> на все наши сборки. Гарантия покрывает как комплектующие, так и качество нашей сборки.</p>
+        <p>Если что-то пошло не так — просто напишите нам. Мы проведем диагностику и заменим неисправную деталь по гарантии в кратчайшие сроки.</p>
+        <p>Сервисный центр: <strong>г. Хабаровск, ул. Профессора Даниловского, 23</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ОТЗЫВЫ ===== -->
+  <section class="reviews-section">
+    <h2 class="section-title">Отзывы клиентов</h2>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <p>«Заказывал сборку для стримов. Сделали быстро, помогли с выбором. ПК работает как часы, спасибо!»</p>
+        <span>— Алексей, Хабаровск</span>
+      </div>
+      <div class="review-card">
+        <p>«Очень довольна! Собрали тихий и мощный компьютер для работы с видео. Фотоотчет прислали еще до отправки.»</p>
+        <span>— Мария, Владивосток</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="faq-section">
+    <h2 class="section-title">Частые вопросы</h2>
+    <div class="faq-list">
+      <details>
+        <summary>Можно ли изменить комплектующие в сборке?</summary>
+        <p>Да, вы можете заменить любую деталь. Напишите нам, и мы пересчитаем стоимость.</p>
+      </details>
+      <details>
+        <summary>Есть ли доставка в другие города?</summary>
+        <p>Да, отправляем через СДЭК или Деловые Линии с надежной упаковкой.</p>
+      </details>
+      <details>
+        <summary>Даете ли вы чеки?</summary>
+        <p>Да, мы работаем официально и выдаем чеки самозанятого (НПД).</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===== ФУТЕР ===== -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4>Термопаст.рф</h4>
+        <p>Сборка ПК под ваши задачи.</p>
+        <p>Бузаков Даниил Алексеевич<br>ИНН: 270608729189</p>
+      </div>
+      <div class="footer-col">
+        <h4>Документы</h4>
+        <a href="docs.html#privacy">Политика конфиденциальности</a>
+        <a href="docs.html#consent">Согласие на обработку ПД</a>
+        <a href="docs.html#policy">Политика обработки ПД</a>
+        <a href="docs.html#info">Информация о ценах</a>
+        <a href="docs.html#cookies">Согласие на cookies</a>
+      </div>
+      <div class="footer-col">
+        <h4>Контакты</h4>
+        <a href="tel:+79141623245">+7 (914) 162-32-45</a>
+        <p>г. Хабаровск, ул. Профессора Даниловского, 23</p>
+        <div class="footer-social">
+          <a href="https://vk.ru/termopast_rf" target="_blank">VK</a>
+          <a href="https://t.me/termopast_rf" target="_blank">Telegram</a>
+          <a href="https://max.ru/channel_termopast" target="_blank">MAX</a>
+          <a href="https://www.avito.ru/brands/8946d67f0d53053f6f7ecd07b1c20e9c/all/predlozheniya_uslug?gdlkerfdnwq=101&page_from=from_item_card&iid=8267651971&sellerId=ba05a4eaa3f4d942d4bd010f67df4cbd" target="_blank">Авито</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Термопаст.рф. Все права защищены.</p>
+      <a href="#" class="up-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">↑ Наверх</a>
+    </div>
+  </footer>
+
+  <!-- ===== КОРЗИНА ===== -->
+  <div id="cart-sidebar" class="cart-sidebar">
+    <button class="cart-close" onclick="toggleCart()">×</button>
+    <h2>Корзина</h2>
+    <div id="cart-items"></div>
+    <div class="cart-total">Итого: <span id="cart-total">0</span> ₽</div>
+    <button onclick="checkoutCart()" class="checkout-btn">Оформить заявку</button>
+  </div>
+
+  <!-- ===== ПАНЕЛЬ ДЕТАЛЕЙ ===== -->
+  <div id="product-detail-panel" class="product-detail-panel">
+    <button class="close-detail" onclick="closeProductDetails()">×</button>
+    <div id="product-detail-content"></div>
+  </div>
+
+  <!-- ===== МОДАЛЬНОЕ ОКНО ===== -->
+  <div id="order-modal" class="modal-overlay" hidden>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeOrderModal()">×</button>
+      <h3 id="modal-title">Оформление заявки</h3>
+      <p id="modal-subtitle" class="modal-subtitle">Заполните форму, и мы свяжемся с вами.</p>
+      
+      <div id="selected-product-info" class="selected-product-info" hidden>
+        <span>Выбранный ПК:</span>
+        <strong id="selected-product-name"></strong>
+      </div>
+
+      <form id="order-form" class="order-form" action="https://formspree.io/f/mppplzwr" method="POST">
+        <input type="hidden" name="order_type" id="order_type" value="">
+        
+        <div class="form-group">
+          <label for="name">Ваше имя</label>
+          <input type="text" id="name" name="name" placeholder="Иван" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="contact">Телефон или Email</label>
+          <input type="text" id="contact" name="contact" placeholder="+7 999 123-45-67" required>
+        </div>
+
+        <div id="extra-fields-group">
+          <div class="form-group">
+            <label for="budget">Бюджет (примерно)</label>
+            <input type="text" id="budget" name="budget" placeholder="Например: 80 000 - 100 000 ₽">
+          </div>
+
+          <div class="form-group">
+            <label for="purpose">Для чего нужен ПК?</label>
+            <input type="text" id="purpose" name="purpose" placeholder="Игры, работа, монтаж...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="contact_method">Предпочтительный способ связи</label>
+          <select id="contact_method" name="contact_method">
+            <option value="Звонок">Звонок</option>
+            <option value="Telegram">Telegram</option>
+            <option value="MAX">MAX</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="delivery-group">
+          <label for="delivery">Способ получения</label>
+          <select id="delivery" name="delivery">
+            <option value="Самовывоз (Хабаровск, ул. Профессора Даниловского, 23)">Самовывоз (г. Хабаровск)</option>
+            <option value="Транспортная компания СДЭК">Транспортная компания СДЭК</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Комментарий</label>
+          <textarea id="message" name="message" rows="3" placeholder="Уточнения по заказу..."></textarea>
+        </div>
+
+        <input type="hidden" name="cart_items" id="cart_items_hidden" value="">
+
+        <div class="form-checkbox-wrapper">
+          <div class="form-checkbox">
+            <input type="checkbox" id="agree" name="agree" required onchange="document.getElementById('submit-btn').disabled = !this.checked;">
+            <label for="agree">Я согласен на обработку персональных данных</label>
+          </div>
+
+          <button type="submit" id="submit-btn" class="submit-btn" disabled>Получить консультацию / Заказать</button>
+        </div>
+
+        <p id="form-success" class="form-success" hidden>Спасибо! Заявка отправлена — мы свяжемся с вами скоро.</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

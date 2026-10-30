@@ -1,0 +1,46 @@
+{
+  "categories": [
+    { "id": "all",    "label": "Все сборки" },
+    { "id": "pro",    "label": "Про" },
+    { "id": "mid",    "label": "Норм" },
+    { "id": "budget", "label": "Бюджет" }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Performance",
+      "series": "IPC (INTEL)",
+      "tier": "pro",
+      "brand": "intel",
+      "fps": 364,
+      "price": 335000,
+      "image": "https://via.placeholder.com/300x300?text=Performance+PC",
+      "specs": {
+        "Видеокарта": "NVIDIA RTX 5080",
+        "Процессор": "Intel Core Ultra 7 270k plus",
+        "ОЗУ": "32GB (2x16GB) DDR5",
+        "Охлаждение": "Lian Li Galahad 360 (СЖО)",
+        "Мат. плата": "Z890"
+      },
+      "description": "Флагманская сборка для 4K-гейминга, стриминга и рендера. Максимальная производительность без компромиссов."
+    },
+    {
+      "id": 2,
+      "name": "Power",
+      "series": "IPC (AMD)",
+      "tier": "mid",
+      "brand": "amd",
+      "fps": 269,
+      "price": 187500,
+      "image": "https://via.placeholder.com/300x300?text=Power+PC",
+      "specs": {
+        "Видеокарта": "NVIDIA RTX 5070",
+        "Процессор": "AMD Ryzen 5 7500F",
+        "ОЗУ": "32GB (2x16GB) DDR5",
+        "Охлаждение": "Deepcool AK620",
+        "Мат. плата": "B650"
+      },
+      "description": "Лучший баланс цены и производительности для 1440p. Идеально для киберспорта и тяжелых игр."
+    }
+  ]
+}
