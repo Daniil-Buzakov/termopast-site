@@ -180,7 +180,6 @@ function openOrderModal(type, productId = null) {
   const submitBtn = document.getElementById('submit-btn');
   const agreeCheckbox = document.getElementById('agree');
 
-  // Сброс формы и чекбокса
   document.getElementById('form-success').hidden = true;
   document.getElementById('order-form').reset();
   document.getElementById('cart_items_hidden').value = '';
@@ -219,7 +218,6 @@ function openOrderModal(type, productId = null) {
     const p = products.find(prod => prod.id === Number(productId));
     title.textContent = 'Вопрос по сборке';
     subtitle.textContent = 'Мы свяжемся с вами для консультации.';
-    // Скрываем доставку и лишние поля, так как это просто вопрос
     deliveryGroup.style.display = 'none'; 
     extraFieldsGroup.style.display = 'none'; 
     orderTypeInput.value = `Вопрос по сборке: ${p.name}`;
@@ -227,7 +225,6 @@ function openOrderModal(type, productId = null) {
     productInfoBlock.hidden = false;
     productNameSpan.textContent = p.name;
     
-    // Записываем сборку в скрытое поле
     document.getElementById('cart_items_hidden').value = `Интересует сборка: ${p.name}\nЦена: ${p.price.toLocaleString('ru-RU')} ₽`;
   }
 
@@ -245,15 +242,63 @@ document.getElementById('order-modal').addEventListener('click', function(e) {
 });
 
 /* ============================================================
-   ОТПРАВКА ФОРМЫ
+   ОТПРАВКА ФОРМЫ (AJAX с всплывающим окном успеха)
    ============================================================ */
 const orderForm = document.getElementById('order-form');
 if (orderForm) {
-  orderForm.addEventListener('submit', function(e) {
-    // МЫ УБРАЛИ e.preventDefault(), чтобы форма уходила напрямую
+  orderForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Отменяем перезагрузку страницы
+    
     const submitBtn = orderForm.querySelector('.submit-btn');
-    submitBtn.textContent = 'Отправка...';
+    const successMsg = document.getElementById('form-success');
+    const originalText = submitBtn.textContent;
+
     submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+    successMsg.hidden = true;
+
+    // Обновляем скрытое поле с составом корзины перед отправкой
+    if (cart.length > 0 && document.getElementById('order_type').value === 'Заказ из корзины') {
+      const itemsText = cart.map(item => `• ${item.name} — ${item.price.toLocaleString('ru-RU')} ₽`).join('\n');
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      document.getElementById('cart_items_hidden').value = `${itemsText}\n\nИтого: ${total.toLocaleString('ru-RU')} ₽`;
+    }
+
+    try {
+      const response = await fetch(orderForm.action, {
+        method: 'POST',
+        body: new FormData(orderForm),
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        orderForm.reset();
+        document.getElementById('cart_items_hidden').value = '';
+        successMsg.hidden = false;
+        
+        // Очищаем корзину, если это был заказ из корзины
+        if(document.getElementById('order_type').value === 'Заказ из корзины') {
+          cart = [];
+          updateCartUI();
+        }
+        
+        // Автоматически закрываем окно через 3 секунды
+        setTimeout(() => closeOrderModal(), 3000);
+        
+      } else {
+        // Если Formspree вернул ошибку, показываем её
+        const data = await response.json().catch(() => ({}));
+        console.error('Formspree Error:', data);
+        alert('Ошибка при отправке: ' + (data.error || 'Проверьте настройки формы на Formspree.'));
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    } catch (err) {
+      console.error('Network Error:', err);
+      alert('Ошибка сети. Проверьте подключение к интернету и попробуйте снова.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
   });
 }
 
