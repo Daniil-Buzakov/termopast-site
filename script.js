@@ -1,3 +1,7 @@
+/* ============================================================
+   Термопаст.рф — Логика каталога, корзины и форм
+   ============================================================ */
+
 let products = [];
 let categories = [];
 let cart = [];
@@ -20,7 +24,7 @@ async function loadData() {
     renderCatalog('all');
   } catch (err) {
     console.error(err);
-    document.getElementById('catalog-list').innerHTML = '<p class="empty">Ошибка загрузки каталога.</p>';
+    document.getElementById('catalog-list').innerHTML = '<p class="empty">Ошибка загрузки каталога. Проверьте наличие файла data/products.json.</p>';
   }
 }
 
@@ -90,9 +94,7 @@ function renderCard(p) {
   `;
 }
 
-// 2. Исправлен баг с отображением не той сборки
 function openProductDetails(id) {
-  // Ищем по ID (приводим к числу на всякий случай)
   const p = products.find(prod => prod.id === Number(id));
   if (!p) return;
 
@@ -170,7 +172,6 @@ function checkoutCart() {
   openOrderModal('cart');
 }
 
-// 1. Управление модальным окном и скрытие полей
 function openOrderModal(type, productId = null) {
   const modal = document.getElementById('order-modal');
   const title = document.getElementById('modal-title');
@@ -183,14 +184,15 @@ function openOrderModal(type, productId = null) {
   const submitBtn = document.getElementById('submit-btn');
   const agreeCheckbox = document.getElementById('agree');
 
-  // Сброс состояния
+  // Сброс формы
   document.getElementById('form-success').hidden = true;
   document.getElementById('order-form').reset();
   document.getElementById('cart_items_hidden').value = '';
   productInfoBlock.hidden = true;
   
-  // Блокируем кнопку до клика на чекбокс
-  submitBtn.disabled = true;
+  // Кнопка заблокирована до согласия
+  if (submitBtn) submitBtn.disabled = true;
+  if (agreeCheckbox) agreeCheckbox.checked = false;
 
   if (type === 'cart') {
     title.textContent = 'Оформление заявки';
@@ -199,6 +201,7 @@ function openOrderModal(type, productId = null) {
     extraFieldsGroup.style.display = 'block';
     orderTypeInput.value = 'Заказ из корзины';
     
+    // Заполняем скрытое поле
     const itemsText = cart.map(item => `• ${item.name} — ${item.price.toLocaleString('ru-RU')} ₽`).join('\n');
     const total = cart.reduce((sum, item) => sum + item.price, 0);
     document.getElementById('cart_items_hidden').value = `${itemsText}\n\nИтого: ${total.toLocaleString('ru-RU')} ₽`;
@@ -223,8 +226,8 @@ function openOrderModal(type, productId = null) {
     const p = products.find(prod => prod.id === Number(productId));
     title.textContent = 'Вопрос по сборке';
     subtitle.textContent = 'Мы свяжемся с вами для консультации.';
-    deliveryGroup.style.display = 'none'; // Убрали доставку для простого вопроса
-    extraFieldsGroup.style.display = 'none'; // Убрали доп поля
+    deliveryGroup.style.display = 'none'; 
+    extraFieldsGroup.style.display = 'none'; 
     orderTypeInput.value = `Вопрос по сборке: ${p.name}`;
     
     productInfoBlock.hidden = false;
@@ -246,46 +249,24 @@ document.getElementById('order-modal').addEventListener('click', function(e) {
   if (e.target === this) closeOrderModal();
 });
 
+/* ============================================================
+   ОТПРАВКА ФОРМЫ (Классическая, без AJAX)
+   ============================================================ */
 const orderForm = document.getElementById('order-form');
 if (orderForm) {
-  orderForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  orderForm.addEventListener('submit', function(e) {
+    // НЕ отменяем стандартное поведение (без e.preventDefault())
+    // Браузер отправит форму на Formspree, и пользователь попадет на их страницу "Спасибо".
+    
     const submitBtn = orderForm.querySelector('.submit-btn');
-    const successMsg = document.getElementById('form-success');
-    const originalText = submitBtn.textContent;
-
-    submitBtn.disabled = true;
     submitBtn.textContent = 'Отправка...';
-    successMsg.hidden = true;
+    submitBtn.disabled = true;
 
-    try {
-      const response = await fetch(orderForm.action, {
-        method: 'POST',
-        body: new FormData(orderForm),
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (response.ok) {
-        orderForm.reset();
-        document.getElementById('cart_items_hidden').value = '';
-        successMsg.hidden = false;
-        
-        if(document.getElementById('order_type').value === 'Заказ из корзины') {
-          cart = [];
-          updateCartUI();
-        }
-        
-        setTimeout(() => closeOrderModal(), 3000);
-        
-      } else {
-        alert('Ошибка при отправке. Попробуйте позже.');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Ошибка сети. Попробуйте снова.');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
+    // На всякий случай еще раз обновляем состав корзины перед отправкой
+    if (cart.length > 0 && document.getElementById('order_type').value === 'Заказ из корзины') {
+      const itemsText = cart.map(item => `• ${item.name} — ${item.price.toLocaleString('ru-RU')} ₽`).join('\n');
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      document.getElementById('cart_items_hidden').value = `${itemsText}\n\nИтого: ${total.toLocaleString('ru-RU')} ₽`;
     }
   });
 }
