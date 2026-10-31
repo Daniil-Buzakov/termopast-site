@@ -8,19 +8,19 @@
   "products": [
     {
       "id": 1,
-      "name": "Performance",
+      "name": "White Winter",
       "series": "IPC (INTEL)",
       "tier": "pro",
       "brand": "intel",
       "fps": 364,
-      "price": 335000,
-      "image": "https://via.placeholder.com/300x300?text=Performance+PC",
+      "price": 115000,
+      "image": "https://Термопаст.рф/White Winter.jpg",
       "specs": {
-        "Видеокарта": "NVIDIA RTX 5080",
-        "Процессор": "Intel Core Ultra 7 270k plus",
-        "ОЗУ": "32GB (2x16GB) DDR5",
-        "Охлаждение": "Lian Li Galahad 360 (СЖО)",
-        "Мат. плата": "Z890"
+        "Видеокарта": "GeForce RTX 5060 8 GB Dual",
+        "Процессор": "Intel Core i5-14400F",
+        "ОЗУ": "DDR5 16 GB 5600 МГц",
+        "Охлаждение": "JONSBO CR-1400E ARGB White",
+        "Мат. плата": "MSI B760 GAMING PLUS"
       },
       "description": "Флагманская сборка для 4K-гейминга, стриминга и рендера. Максимальная производительность без компромиссов."
     },
