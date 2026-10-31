@@ -1,6 +1,8 @@
 let products = [];
 let categories = [];
 let cart = [];
+// Заявки (вопрос по сборке / заказ), которые "замораживаются" в корзине
+let frozenOrders = [];
 
 const iconsMap = {
   "Видеокарта": "icon-gpu.png",
@@ -76,7 +78,7 @@ function renderCard(p) {
         <div class="pc-price">от ${p.price.toLocaleString('ru-RU')} ₽</div>
       </div>
       <div class="pc-card-bottom">
-        <button class="buy-btn" onclick="event.stopPropagation(); addToCart(${p.id})">Купить ПК <span>→</span></button>
+        <button class="buy-btn" onclick="event.stopPropagation(); openOrderModal('buy', ${p.id})">Купить ПК <span>→</span></button>
         <button class="details-btn" onclick="event.stopPropagation(); openProductDetails(${p.id})">Подробнее о сборке <span>→</span></button>
         
         <div class="fps-block">
@@ -117,7 +119,7 @@ function openProductDetails(id) {
     </div>
 
     <div class="detail-actions">
-      <button class="buy-btn" onclick="addToCart(${p.id}); closeProductDetails();">Купить ПК</button>
+      <button class="buy-btn" onclick="openOrderModal('buy', ${p.id}); closeProductDetails();">Купить ПК</button>
       <button class="order-this-btn" onclick="openOrderModal('checkout', ${p.id}); closeProductDetails();">Задать вопрос по сборке</button>
     </div>
   `;
@@ -142,13 +144,23 @@ function updateCartUI() {
   const itemsDiv = document.getElementById('cart-items');
   const totalSpan = document.getElementById('cart-total');
 
-  if (cart.length === 0) {
+  let html = '';
+
+  // Замороженные заявки (не считаются в итоге, нельзя удалить)
+  frozenOrders.forEach(order => {
+    html += `<div class="cart-item frozen">
+      <span>${order.label}</span>
+      <span class="frozen-status">Скоро с вами свяжемся</span>
+    </div>`;
+  });
+
+  if (cart.length === 0 && frozenOrders.length === 0) {
     itemsDiv.innerHTML = '<p>Корзина пуста</p>';
     totalSpan.textContent = '0';
     return;
   }
 
-  let html = ''; let total = 0;
+  let total = 0;
   cart.forEach((item, index) => {
     html += `<div class="cart-item"><span>${item.name}</span><span>${item.price.toLocaleString('ru-RU')} ₽<button class="rm" onclick="removeFromCart(${index})">×</button></span></div>`;
     total += item.price;
@@ -160,20 +172,29 @@ function updateCartUI() {
 function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
 function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); }
 
-function checkoutCart() {
-  if (cart.length === 0) {
-    alert('Корзина пуста. Добавьте сборку.');
-    return;
-  }
-  openOrderModal('cart');
+function freezeOrder(label) {
+  frozenOrders.push({ label });
+  updateCartUI();
+}
+
+/* ============================================================
+   МОДАЛЬНОЕ ОКНО — РАЗНЫЕ ФОРМЫ ДЛЯ РАЗНЫХ ОБРАЩЕНИЙ
+   ============================================================ */
+function setFieldVisibility({ budget, purpose, delivery }) {
+  // budget и purpose — это поля "Бюджет" и "Для чего нужен ПК"
+  document.getElementById('budget').closest('.form-group').style.display = budget ? 'block' : 'none';
+  document.getElementById('purpose').closest('.form-group').style.display = purpose ? 'block' : 'none';
+  document.getElementById('delivery-group').style.display = delivery ? 'block' : 'none';
+
+  // Обязательность полей
+  document.getElementById('budget').required = !!budget;
+  document.getElementById('purpose').required = !!purpose;
 }
 
 function openOrderModal(type, productId = null) {
   const modal = document.getElementById('order-modal');
   const title = document.getElementById('modal-title');
   const subtitle = document.getElementById('modal-subtitle');
-  const deliveryGroup = document.getElementById('delivery-group');
-  const extraFieldsGroup = document.getElementById('extra-fields-group');
   const orderTypeInput = document.getElementById('order_type');
   const productInfoBlock = document.getElementById('selected-product-info');
   const productNameSpan = document.getElementById('selected-product-name');
@@ -187,45 +208,41 @@ function openOrderModal(type, productId = null) {
   if (submitBtn) submitBtn.disabled = true;
   if (agreeCheckbox) agreeCheckbox.checked = false;
 
-  if (type === 'cart') {
-    title.textContent = 'Оформление заявки';
-    subtitle.textContent = 'Проверьте состав корзины и укажите данные для связи.';
-    deliveryGroup.style.display = 'block';
-    extraFieldsGroup.style.display = 'block';
-    orderTypeInput.value = 'Заказ из корзины';
-    
-    const itemsText = cart.map(item => `• ${item.name} — ${item.price.toLocaleString('ru-RU')} ₽`).join('\n');
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    document.getElementById('cart_items_hidden').value = `${itemsText}\n\nИтого: ${total.toLocaleString('ru-RU')} ₽`;
-    
-    toggleCart();
-  } 
-  else if (type === 'custom') {
-    title.textContent = 'Подбор ПК';
-    subtitle.textContent = 'Расскажите о ваших задачах, и мы поможем выбрать.';
-    deliveryGroup.style.display = 'block';
-    extraFieldsGroup.style.display = 'block';
+  // Сброс всех полей в видимое состояние
+  setFieldVisibility({ budget: false, purpose: false, delivery: false });
+
+  if (type === 'custom') {
+    // Кнопка "Собрать на заказ"
+    title.textContent = 'Собрать на заказ';
+    subtitle.textContent = 'Расскажите о ваших задачах, и мы поможем подобрать сборку.';
     orderTypeInput.value = 'Индивидуальная сборка на заказ';
-  } 
-  else if (type === 'contact') {
-    title.textContent = 'Связаться с нами';
-    subtitle.textContent = 'Оставьте ваши контакты, и мы ответим.';
-    deliveryGroup.style.display = 'none';
-    extraFieldsGroup.style.display = 'none';
-    orderTypeInput.value = 'Общий вопрос / Связаться';
+    setFieldVisibility({ budget: true, purpose: true, delivery: false });
+  }
+  else if (type === 'buy' && productId) {
+    // Кнопка "Купить ПК"
+    const p = products.find(prod => prod.id === Number(productId));
+    title.textContent = 'Купить ПК';
+    subtitle.textContent = 'Оставьте данные для оформления заказа.';
+    orderTypeInput.value = `Заказ ПК: ${p.name}`;
+    productInfoBlock.hidden = false;
+    productNameSpan.textContent = p.name;
+    setFieldVisibility({ budget: false, purpose: false, delivery: true });
+
+    document.getElementById('cart_items_hidden').value =
+      `Выбранный ПК: ${p.name}\nЦена: ${p.price.toLocaleString('ru-RU')} ₽`;
   }
   else if (type === 'checkout' && productId) {
+    // Кнопка "Вопрос по сборке" — оставляем как есть
     const p = products.find(prod => prod.id === Number(productId));
     title.textContent = 'Вопрос по сборке';
     subtitle.textContent = 'Мы свяжемся с вами для консультации.';
-    deliveryGroup.style.display = 'none'; 
-    extraFieldsGroup.style.display = 'none'; 
     orderTypeInput.value = `Вопрос по сборке: ${p.name}`;
-    
     productInfoBlock.hidden = false;
     productNameSpan.textContent = p.name;
-    
-    document.getElementById('cart_items_hidden').value = `Интересует сборка: ${p.name}\nЦена: ${p.price.toLocaleString('ru-RU')} ₽`;
+    setFieldVisibility({ budget: false, purpose: false, delivery: false });
+
+    document.getElementById('cart_items_hidden').value =
+      `Интересует сборка: ${p.name}\nЦена: ${p.price.toLocaleString('ru-RU')} ₽`;
   }
 
   modal.hidden = false;
@@ -247,22 +264,16 @@ document.getElementById('order-modal').addEventListener('click', function(e) {
 const orderForm = document.getElementById('order-form');
 if (orderForm) {
   orderForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); // Отменяем перезагрузку страницы
-    
+    e.preventDefault();
+
     const submitBtn = orderForm.querySelector('.submit-btn');
     const successMsg = document.getElementById('form-success');
     const originalText = submitBtn.textContent;
+    const orderType = document.getElementById('order_type').value;
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'Отправка...';
     successMsg.hidden = true;
-
-    // Обновляем скрытое поле с составом корзины перед отправкой
-    if (cart.length > 0 && document.getElementById('order_type').value === 'Заказ из корзины') {
-      const itemsText = cart.map(item => `• ${item.name} — ${item.price.toLocaleString('ru-RU')} ₽`).join('\n');
-      const total = cart.reduce((sum, item) => sum + item.price, 0);
-      document.getElementById('cart_items_hidden').value = `${itemsText}\n\nИтого: ${total.toLocaleString('ru-RU')} ₽`;
-    }
 
     try {
       const response = await fetch(orderForm.action, {
@@ -275,18 +286,16 @@ if (orderForm) {
         orderForm.reset();
         document.getElementById('cart_items_hidden').value = '';
         successMsg.hidden = false;
-        
-        // Очищаем корзину, если это был заказ из корзины
-        if(document.getElementById('order_type').value === 'Заказ из корзины') {
-          cart = [];
-          updateCartUI();
+
+        // Замораживаем запись в корзине: вопрос по сборке или заказ ПК
+        if (orderType.startsWith('Вопрос по сборке:')) {
+          freezeOrder(orderType);
+        } else if (orderType.startsWith('Заказ ПК:')) {
+          freezeOrder(orderType);
         }
-        
-        // Автоматически закрываем окно через 3 секунды
+
         setTimeout(() => closeOrderModal(), 3000);
-        
       } else {
-        // Если Formspree вернул ошибку, показываем её
         const data = await response.json().catch(() => ({}));
         console.error('Formspree Error:', data);
         alert('Ошибка при отправке: ' + (data.error || 'Проверьте настройки формы на Formspree.'));
