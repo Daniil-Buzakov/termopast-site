@@ -12,9 +12,9 @@
       "series": "IPC (INTEL)",
       "tier": "pro",
       "brand": "intel",
-      "fps": 200,
+      "fps": "200+",
       "price": 115000,
-      "image": "https://Термопаст.рф/White Winter.jpg",
+      "image": "White Winter.jpg",
       "specs": {
         "Видеокарта": "GeForce RTX 5060 8 GB Dual",
         "Процессор": "Intel Core i5-14400F",
@@ -22,7 +22,7 @@
         "Охлаждение": "JONSBO CR-1400E ARGB White",
         "Мат. плата": "MSI B760 GAMING PLUS"
       },
-      "description": "Флагманская сборка для 4K-гейминга, стриминга и рендера. Максимальная производительность без компромиссов."
+      "description": "Сбалансированная сборка для 4K-гейминга, стриминга и рендера. Отличный выбор для работы и игр."
     },
     {
       "id": 2,
@@ -30,9 +30,9 @@
       "series": "IPC (AMD)",
       "tier": "mid",
       "brand": "amd",
-      "fps": 150,
+      "fps": "150+",
       "price": 70000,
-      "image": "https://Термопаст.рф/Black pearl.png",
+      "image": "Black pearl.png",
       "specs": {
         "Видеокарта": "GeForce RTX 3050 6 GB Dual",
         "Процессор": "AMD Ryzen 5 5500",
@@ -40,17 +40,17 @@
         "Охлаждение": "DEEPCOOL AG300",
         "Мат. плата": "MSI PRO A520M-S"
       },
-      "description": "Лучший баланс цены и производительности для 1440p. Идеально для киберспорта."
-    }
+      "description": "Лучший баланс цены и производительности для 1440p. Идеально для киберспорта и популярных игр."
+    },
     {
       "id": 3,
       "name": "Darkness pro",
       "series": "IPC (AMD)",
       "tier": "pro",
       "brand": "amd",
-      "fps": 200,
+      "fps": "200+",
       "price": 110000,
-      "image": "https://Термопаст.рф/Darkness pro.png",
+      "image": "Darkness pro.png",
       "specs": {
         "Видеокарта": "GeForce RTX 4060",
         "Процессор": "AMD Ryzen 5 8400F",
