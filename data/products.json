@@ -12,7 +12,7 @@
       "series": "IPC (INTEL)",
       "tier": "pro",
       "brand": "intel",
-      "fps": 200+,
+      "fps": "200+",
       "price": 115000,
       "image": "https://Термопаст.рф/White Winter.jpg",
       "specs": {
@@ -30,7 +30,7 @@
       "series": "IPC (AMD)",
       "tier": "mid",
       "brand": "amd",
-      "fps": 150+,
+      "fps": "150+",
       "price": 70000,
       "image": "https://Термопаст.рф/Black pearl.png",
       "specs": {
@@ -48,7 +48,7 @@
       "series": "IPC (AMD)",
       "tier": "pro",
       "brand": "amd",
-      "fps": 200+,
+      "fps": "200+",
       "price": 110000,
       "image": "https://Термопаст.рф/Darkness pro.png",
       "specs": {
