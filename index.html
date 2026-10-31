@@ -17,7 +17,7 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <!-- SEO Настройки -->
   <title>Термопаст.рф — Сборка ПК на заказ в Хабаровске</title>
   <meta name="description" content="Профессиональная сборка игровых и рабочих компьютеров под ваш бюджет. Гарантия 12 месяцев, стресс-тест 24 часа. Доставка по Хабаровску и всей России.">
@@ -33,7 +33,6 @@
   <meta property="og:url" content="https://термопаст.рф/">
   <meta property="og:title" content="Термопаст.рф — Сборка ПК мечты">
   <meta property="og:description" content="Соберем мощный компьютер под ваши задачи за 2 дня. Гарантия 12 месяцев.">
-  <!-- Обязательно добавьте файл og-image.png в папку с проектом! -->
   <meta property="og:image" content="https://термопаст.рф/og-image.png">
 
   <!-- Баннер для Twitter / X -->
@@ -80,14 +79,12 @@
     <div class="hero-utp">
       <h1>Соберем ПК мечты под ваш бюджет за 2 дня</h1>
       <p>Каждый компьютер проходит 24-часовой стресс-тест перед отправкой. Мы не перепродаем — мы собираем.</p>
-      
+
       <div class="trust-badges">
         <span class="badge-item">🛡 Гарантия 12 мес</span>
         <span class="badge-item">💳 Оплата при получении</span>
         <span class="badge-item">🚚 Бесплатная доставка по городу</span>
       </div>
-
-      <button class="banner-btn" onclick="openOrderModal('custom')">Подобрать ПК</button>
     </div>
 
     <div class="custom-build-banner">
@@ -158,7 +155,6 @@
         </div>
       </div>
       <div class="how-image">
-        <!-- Ваше фото процесса сборки -->
         <img src="stage-build.png" alt="Процесс сборки ПК" onerror="this.src='https://via.placeholder.com/600x800/161a22/2ee6ff?text=Добавьте+stage-build.png'">
       </div>
     </div>
@@ -168,7 +164,6 @@
   <section class="warranty-section" id="warranty">
     <div class="warranty-container">
       <div class="warranty-image">
-        <!-- Ваше фото сервиса/гарантии -->
         <img src="warranty-photo.png" alt="Гарантийный отдел" onerror="this.src='https://via.placeholder.com/600x800/161a22/2ee6ff?text=Добавьте+warranty-photo.png'">
       </div>
       <div class="warranty-content">
@@ -268,7 +263,7 @@
       <button class="modal-close" onclick="closeOrderModal()">×</button>
       <h3 id="modal-title">Оформление заявки</h3>
       <p id="modal-subtitle" class="modal-subtitle">Заполните форму, и мы свяжемся с вами.</p>
-      
+
       <div id="selected-product-info" class="selected-product-info" hidden>
         <span>Выбранный ПК:</span>
         <strong id="selected-product-name"></strong>
@@ -276,30 +271,32 @@
 
       <form id="order-form" class="order-form" action="https://formspree.io/f/mppplzwr" method="POST">
         <input type="hidden" name="order_type" id="order_type" value="">
-        
-        <div class="form-group">
+        <input type="hidden" name="cart_items" id="cart_items_hidden" value="">
+
+        <!-- Общие поля -->
+        <div class="form-group" id="name-group">
           <label for="name">Ваше имя</label>
           <input type="text" id="name" name="name" placeholder="Иван" required>
         </div>
-        
-        <div class="form-group">
+
+        <div class="form-group" id="contact-group">
           <label for="contact">Телефон или Email</label>
           <input type="text" id="contact" name="contact" placeholder="+7 999 123-45-67" required>
         </div>
 
-        <div id="extra-fields-group">
-          <div class="form-group">
-            <label for="budget">Бюджет (примерно)</label>
-            <input type="text" id="budget" name="budget" placeholder="Например: 80 000 - 100 000 ₽">
-          </div>
-
-          <div class="form-group">
-            <label for="purpose">Для чего нужен ПК?</label>
-            <input type="text" id="purpose" name="purpose" placeholder="Игры, работа, монтаж...">
-          </div>
+        <!-- Только для «Собрать на заказ» -->
+        <div class="form-group" id="budget-group">
+          <label for="budget">Бюджет (примерно)</label>
+          <input type="text" id="budget" name="budget" placeholder="Например: 80 000 - 100 000 ₽">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="purpose-group">
+          <label for="purpose">Для чего нужен ПК?</label>
+          <input type="text" id="purpose" name="purpose" placeholder="Игры, работа, монтаж...">
+        </div>
+
+        <!-- Общее для всех -->
+        <div class="form-group" id="contact-method-group">
           <label for="contact_method">Предпочтительный способ связи</label>
           <select id="contact_method" name="contact_method">
             <option value="Звонок">Звонок</option>
@@ -308,6 +305,7 @@
           </select>
         </div>
 
+        <!-- Только для «Купить ПК» -->
         <div class="form-group" id="delivery-group">
           <label for="delivery">Способ получения</label>
           <select id="delivery" name="delivery">
@@ -316,12 +314,11 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <!-- Общее для всех -->
+        <div class="form-group" id="message-group">
           <label for="message">Комментарий</label>
           <textarea id="message" name="message" rows="3" placeholder="Уточнения по заказу..."></textarea>
         </div>
-
-        <input type="hidden" name="cart_items" id="cart_items_hidden" value="">
 
         <div class="form-checkbox-wrapper">
           <div class="form-checkbox">
@@ -329,7 +326,7 @@
             <label for="agree">Я согласен на обработку персональных данных</label>
           </div>
 
-          <button type="submit" id="submit-btn" class="submit-btn" disabled>Получить консультацию / Заказать</button>
+          <button type="submit" id="submit-btn" class="submit-btn" disabled>Отправить</button>
         </div>
 
         <p id="form-success" class="form-success" hidden>Спасибо! Заявка отправлена — мы свяжемся с вами скоро.</p>
