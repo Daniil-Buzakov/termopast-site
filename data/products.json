@@ -12,7 +12,7 @@
       "series": "IPC (INTEL)",
       "tier": "pro",
       "brand": "intel",
-      "fps": 364,
+      "fps": 200+,
       "price": 115000,
       "image": "https://Термопаст.рф/White Winter.jpg",
       "specs": {
@@ -26,21 +26,39 @@
     },
     {
       "id": 2,
-      "name": "Power",
+      "name": "Black pearl",
       "series": "IPC (AMD)",
       "tier": "mid",
       "brand": "amd",
-      "fps": 269,
-      "price": 187500,
-      "image": "https://via.placeholder.com/300x300?text=Power+PC",
+      "fps": 150+,
+      "price": 70000,
+      "image": "https://Термопаст.рф/Black pearl.png",
       "specs": {
-        "Видеокарта": "NVIDIA RTX 5070",
-        "Процессор": "AMD Ryzen 5 7500F",
-        "ОЗУ": "32GB (2x16GB) DDR5",
-        "Охлаждение": "Deepcool AK620",
-        "Мат. плата": "B650"
+        "Видеокарта": "GeForce RTX 3050 6 GB Dual",
+        "Процессор": "AMD Ryzen 5 5500",
+        "ОЗУ": "DDR4 16 GB 3200 МГц",
+        "Охлаждение": "DEEPCOOL AG300",
+        "Мат. плата": "MSI PRO A520M-S"
       },
-      "description": "Лучший баланс цены и производительности для 1440p. Идеально для киберспорта и тяжелых игр."
+      "description": "Лучший баланс цены и производительности для 1440p. Идеально для киберспорта."
+    }
+    {
+      "id": 3,
+      "name": "Darkness pro",
+      "series": "IPC (AMD)",
+      "tier": "pro",
+      "brand": "amd",
+      "fps": 200+,
+      "price": 110000,
+      "image": "https://Термопаст.рф/Darkness pro.png",
+      "specs": {
+        "Видеокарта": "GeForce RTX 4060",
+        "Процессор": "AMD Ryzen 5 8400F",
+        "ОЗУ": "DDR5 16 GB 6000 МГц",
+        "Охлаждение": "DEEPCOOL AG300",
+        "Мат. плата": "GIGABYTE A620M H"
+      },
+      "description": "Сбалансированная сборка для стабильных 200+ FPS в Full HD. Отличный старт для киберспорта и AAA-игр без переплаты."
     }
   ]
 }
