@@ -316,3 +316,45 @@ footer { background: var(--bg-surface); border-top: 1px solid var(--border); pad
   .cart-sidebar { padding: 24px 20px; }
   .modal-content { padding: 24px 20px; }
 }
+
+/* ============================================================
+   SEO ТЕКСТ (Плавно скрыт внизу сайта)
+   ============================================================ */
+.seo-text-section {
+  background: var(--bg-base);
+  padding: 40px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.seo-container {
+  max-width: 900px;
+  margin: 0 auto;
+  color: var(--text-muted); /* Темно-серый цвет, чтобы не отвлекать */
+  font-size: 0.85rem;       /* Мелкий шрифт */
+  line-height: 1.6;
+}
+
+.seo-container h2 {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  font-family: 'Inter', sans-serif; /* Не жирный Montserrat, чтобы не кричал */
+  font-weight: 500;
+}
+
+.seo-container p {
+  margin-bottom: 12px;
+}
+
+.seo-container strong {
+  color: var(--text-secondary);
+}
+
+.seo-container ul {
+  padding-left: 20px;
+  margin-bottom: 16px;
+}
+
+.seo-container li {
+  margin-bottom: 8px;
+}
