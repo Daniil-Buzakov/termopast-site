@@ -55,11 +55,12 @@ function renderCatalog(categoryId, btn) {
 }
 
 function renderCard(p) {
+  const seoPhrase = 'сборка компьютеров Хабаровск';
   const specsHtml = Object.entries(p.specs).map(([k, v]) => {
     const iconSrc = iconsMap[k] || "icon-cpu.png";
     return `
       <div class="mini-spec-row">
-        <img src="${iconSrc}" alt="${k}" class="spec-icon-img">
+        <img src="${iconSrc}" alt="${k} ${seoPhrase}" class="spec-icon-img">
         <div class="spec-info">
           <span>${k}</span>
           <strong>${v}</strong>
@@ -68,16 +69,22 @@ function renderCard(p) {
     `;
   }).join('');
 
+  // ALT с SEO для карточки
+  const altSeo = `Игровой ПК ${p.name} в Хабаровске — купить компьютер, отзывы`;
+
   return `
     <div class="pc-card" onclick="openProductDetails(${p.id})">
       <div class="pc-card-top">
         <div class="brand-logo ${p.brand}">${p.brand.toUpperCase()}</div>
-        <img src="${p.image}" alt="${p.name}" class="pc-image">
+        <img src="${p.image}" alt="${altSeo}" title="Заказать сборку ПК ${p.name} в Хабаровске под задачи" class="pc-image">
         <div class="pc-series">${p.series}</div>
-        <div class="pc-name">${p.name}</div>
+        <div class="pc-name">${p.name} — игровой ПК Хабаровск</div>
         <div class="pc-price">от ${p.price.toLocaleString('ru-RU')} ₽</div>
       </div>
       <div class="pc-card-bottom">
+        <div class="seo-caption">
+          <span>Купить компьютер Хабаровск отзывы • заказать ПК сборку в Хабаровске</span>
+        </div>
         <button class="buy-btn" onclick="event.stopPropagation(); openOrderModal('buy', ${p.id})">Купить ПК <span>→</span></button>
         <button class="details-btn" onclick="event.stopPropagation(); openProductDetails(${p.id})">Подробнее о сборке <span>→</span></button>
         
@@ -96,19 +103,28 @@ function openProductDetails(id) {
   const p = products.find(prod => prod.id === Number(id));
   if (!p) return;
 
+  // --- УНИКАЛЬНЫЙ title и description для страницы детали ---
+  document.title = `Игровой ПК под заказ — ${p.name} от ${p.price.toLocaleString('ru-RU')}₽ в Хабаровске | Термопаст.рф`;
+  let desc = `Купить игровой ПК ${p.name} — идеальная сборка под ваши задачи, честные отзывы, индивидуальная сборка и гарантия 12 мес. Заказать ПК в Хабаровске.`;
+  let meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute('content', desc);
+
   const specsHtml = Object.entries(p.specs).map(([k, v]) => `
     <div class="detail-spec-row"><span>${k}</span><strong>${v}</strong></div>
   `).join('');
 
+  // ALT с SEO и подписями также внутри деталей
+  const altSeo = `Купить игровой ПК ${p.name} в Хабаровске — отзывы, заказ`;
+
   document.getElementById('product-detail-content').innerHTML = `
-    <img src="${p.image}" class="detail-image">
+    <img src="${p.image}" alt="${altSeo}" class="detail-image">
     <div class="detail-brand">${p.series}</div>
-    <h2 class="detail-name">${p.name}</h2>
+    <h2 class="detail-name">${p.name} — игровой ПК Хабаровск</h2>
     <div class="detail-price">от ${p.price.toLocaleString('ru-RU')} ₽</div>
     
     <div class="detail-desc">
       <h3>Описание</h3>
-      <p>${p.description}</p>
+      <p>${p.description} <br><strong>Сборка компьютеров в Хабаровске, купить компьютер, отзывы.</strong></p>
       <p><strong>Что в коробке:</strong> Кабели питания, гарантийный талон, инструкция.</p>
       <p><strong>Апгрейд:</strong> Можно расширить ОЗУ до 64GB, есть слот под второй NVMe.</p>
     </div>
@@ -116,6 +132,10 @@ function openProductDetails(id) {
     <div class="detail-specs">
       <h3>Комплектующие</h3>
       ${specsHtml}
+    </div>
+
+    <div class="seo-caption">
+      <small>Ключи: игровой ПК хабаровск, сборка компьютеров хабаровск, купить компьютер хабаровск отзывы, заказать ПК сборку в Хабаровске</small>
     </div>
 
     <div class="detail-actions">
@@ -169,7 +189,10 @@ function updateCartUI() {
   totalSpan.textContent = total.toLocaleString('ru-RU');
 }
 
-function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  updateCartUI();
+}
 function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); }
 
 function freezeOrder(label) {
@@ -181,12 +204,9 @@ function freezeOrder(label) {
    МОДАЛЬНОЕ ОКНО — РАЗНЫЕ ФОРМЫ ДЛЯ РАЗНЫХ ОБРАЩЕНИЙ
    ============================================================ */
 function setFieldVisibility({ budget, purpose, delivery }) {
-  // budget и purpose — это поля "Бюджет" и "Для чего нужен ПК"
   document.getElementById('budget').closest('.form-group').style.display = budget ? 'block' : 'none';
   document.getElementById('purpose').closest('.form-group').style.display = purpose ? 'block' : 'none';
   document.getElementById('delivery-group').style.display = delivery ? 'block' : 'none';
-
-  // Обязательность полей
   document.getElementById('budget').required = !!budget;
   document.getElementById('purpose').required = !!purpose;
 }
@@ -208,18 +228,15 @@ function openOrderModal(type, productId = null) {
   if (submitBtn) submitBtn.disabled = true;
   if (agreeCheckbox) agreeCheckbox.checked = false;
 
-  // Сброс всех полей в видимое состояние
   setFieldVisibility({ budget: false, purpose: false, delivery: false });
 
   if (type === 'custom') {
-    // Кнопка "Собрать на заказ"
     title.textContent = 'Собрать на заказ';
     subtitle.textContent = 'Расскажите о ваших задачах, и мы поможем подобрать сборку.';
     orderTypeInput.value = 'Индивидуальная сборка на заказ';
     setFieldVisibility({ budget: true, purpose: true, delivery: false });
   }
   else if (type === 'buy' && productId) {
-    // Кнопка "Купить ПК"
     const p = products.find(prod => prod.id === Number(productId));
     title.textContent = 'Купить ПК';
     subtitle.textContent = 'Оставьте данные для оформления заказа.';
@@ -227,12 +244,10 @@ function openOrderModal(type, productId = null) {
     productInfoBlock.hidden = false;
     productNameSpan.textContent = p.name;
     setFieldVisibility({ budget: false, purpose: false, delivery: true });
-
     document.getElementById('cart_items_hidden').value =
       `Выбранный ПК: ${p.name}\nЦена: ${p.price.toLocaleString('ru-RU')} ₽`;
   }
   else if (type === 'checkout' && productId) {
-    // Кнопка "Вопрос по сборке" — оставляем как есть
     const p = products.find(prod => prod.id === Number(productId));
     title.textContent = 'Вопрос по сборке';
     subtitle.textContent = 'Мы свяжемся с вами для консультации.';
@@ -240,7 +255,6 @@ function openOrderModal(type, productId = null) {
     productInfoBlock.hidden = false;
     productNameSpan.textContent = p.name;
     setFieldVisibility({ budget: false, purpose: false, delivery: false });
-
     document.getElementById('cart_items_hidden').value =
       `Интересует сборка: ${p.name}\nЦена: ${p.price.toLocaleString('ru-RU')} ₽`;
   }
@@ -287,7 +301,6 @@ if (orderForm) {
         document.getElementById('cart_items_hidden').value = '';
         successMsg.hidden = false;
 
-        // Замораживаем запись в корзине: вопрос по сборке или заказ ПК
         if (orderType.startsWith('Вопрос по сборке:')) {
           freezeOrder(orderType);
         } else if (orderType.startsWith('Заказ ПК:')) {
@@ -310,5 +323,16 @@ if (orderForm) {
     }
   });
 }
+
+// ============ SEO auto meta =============
+/**
+ * Если у тебя SPA – верни стандартный meta, когда пользователь закроет карточку сборки:
+ */
+function resetAutoSEO() {
+  document.title = "Сборка ПК в Хабаровске на заказ | Игровые компьютеры — Термопаст.рф";
+  const meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute('content', "Собираем игровые компьютеры под ваш бюджет за 1-3 дня — с гарантией, быстрой доставкой и индивидуальной консультацией. Стресс-тест, честные чеки, поддержка! Рассчитайте стоимость — подберём идеальную сборку для ваших задач.");
+}
+// Можешь вызвать resetAutoSEO() из closeProductDetails или при переходе "назад".
 
 loadData();
