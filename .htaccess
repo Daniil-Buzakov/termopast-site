@@ -1,0 +1,6 @@
+# Включить mod_rewrite (если ещё не включён)
+RewriteEngine On
+
+# Редирект index.html на корень
+RewriteCond %{THE_REQUEST} /index\.html [NC]
+RewriteRule ^index\.html$ / [R=301,L]
