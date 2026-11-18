@@ -1,7 +1,6 @@
 let products = [];
 let categories = [];
 let cart = [];
-// Заявки (вопрос по сборке / заказ), которые "замораживаются" в корзине
 let frozenOrders = [];
 
 const iconsMap = {
@@ -12,6 +11,9 @@ const iconsMap = {
   "Процессор": "icon-cpu.png"
 };
 
+/* ============================================================
+   ЗАГРУЗКА ДАННЫХ
+   ============================================================ */
 async function loadData() {
   try {
     const res = await fetch('data/products.json');
@@ -20,12 +22,43 @@ async function loadData() {
     categories = data.categories;
     renderFilters();
     renderCatalog('all');
+    // После отрисовки каталога инициализируем reveal
+    requestAnimationFrame(initReveal);
   } catch (err) {
     console.error(err);
     document.getElementById('catalog-list').innerHTML = '<p class="empty">Ошибка загрузки каталога.</p>';
   }
 }
 
+/* ============================================================
+   REVEAL ON SCROLL
+   ============================================================ */
+function initReveal() {
+  const targets = document.querySelectorAll(
+    '.why-card, .step-item, .review-card, .warranty-content, .warranty-image, .how-image, .seo-container, .section-title'
+  );
+  if (!('IntersectionObserver' in window)) {
+    targets.forEach(el => el.classList.add('reveal', 'visible'));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  targets.forEach(el => {
+    el.classList.add('reveal');
+    observer.observe(el);
+  });
+}
+
+/* ============================================================
+   ФИЛЬТРЫ И КАТАЛОГ
+   ============================================================ */
 function renderFilters() {
   document.getElementById('filters').innerHTML = categories
     .map(c => `<button data-cat="${c.id}" class="${c.id === 'all' ? 'active' : ''}"
@@ -52,6 +85,7 @@ function renderCatalog(categoryId, btn) {
   }).join('');
 
   document.getElementById('catalog-list').innerHTML = html.trim() || '<p class="empty">Нет сборок.</p>';
+  requestAnimationFrame(initReveal);
 }
 
 function renderCard(p) {
@@ -69,7 +103,6 @@ function renderCard(p) {
     `;
   }).join('');
 
-  // ALT с SEO для карточки
   const altSeo = `Игровой ПК ${p.name} в Хабаровске — купить компьютер, отзывы`;
 
   return `
@@ -87,7 +120,7 @@ function renderCard(p) {
         </div>
         <button class="buy-btn" onclick="event.stopPropagation(); openOrderModal('buy', ${p.id})">Купить ПК <span>→</span></button>
         <button class="details-btn" onclick="event.stopPropagation(); openProductDetails(${p.id})">Подробнее о сборке <span>→</span></button>
-        
+
         <div class="fps-block">
           <div class="fps-circle"><span>${p.fps}</span><small>FPS</small></div>
           <div class="fps-text"><strong>Показатели в играх</strong><span>Средний FPS в играх</span></div>
@@ -99,11 +132,13 @@ function renderCard(p) {
   `;
 }
 
+/* ============================================================
+   ДЕТАЛИ ПРОДУКТА
+   ============================================================ */
 function openProductDetails(id) {
   const p = products.find(prod => prod.id === Number(id));
   if (!p) return;
 
-  // --- УНИКАЛЬНЫЙ title и description для страницы детали ---
   document.title = `Игровой ПК под заказ — ${p.name} от ${p.price.toLocaleString('ru-RU')}₽ в Хабаровске | Термопаст.рф`;
   let desc = `Купить игровой ПК ${p.name} — идеальная сборка под ваши задачи, честные отзывы, индивидуальная сборка и гарантия 12 мес. Заказать ПК в Хабаровске.`;
   let meta = document.querySelector('meta[name="description"]');
@@ -113,7 +148,6 @@ function openProductDetails(id) {
     <div class="detail-spec-row"><span>${k}</span><strong>${v}</strong></div>
   `).join('');
 
-  // ALT с SEO и подписями также внутри деталей
   const altSeo = `Купить игровой ПК ${p.name} в Хабаровске — отзывы, заказ`;
 
   document.getElementById('product-detail-content').innerHTML = `
@@ -121,7 +155,7 @@ function openProductDetails(id) {
     <div class="detail-brand">${p.series}</div>
     <h2 class="detail-name">${p.name} — игровой ПК Хабаровск</h2>
     <div class="detail-price">от ${p.price.toLocaleString('ru-RU')} ₽</div>
-    
+
     <div class="detail-desc">
       <h3>Описание</h3>
       <p>${p.description} <br><strong>Сборка компьютеров в Хабаровске, купить компьютер, отзывы.</strong></p>
@@ -149,8 +183,12 @@ function openProductDetails(id) {
 
 function closeProductDetails() {
   document.getElementById('product-detail-panel').classList.remove('open');
+  resetAutoSEO();
 }
 
+/* ============================================================
+   КОРЗИНА
+   ============================================================ */
 function addToCart(id) {
   const product = products.find(p => p.id === Number(id));
   if (!product) return;
@@ -160,13 +198,18 @@ function addToCart(id) {
 }
 
 function updateCartUI() {
-  document.getElementById('cart-count').textContent = cart.length;
+  const countEl = document.getElementById('cart-count');
+  countEl.textContent = cart.length;
+  // Bump-анимация счётчика
+  countEl.classList.remove('bump');
+  void countEl.offsetWidth;
+  countEl.classList.add('bump');
+
   const itemsDiv = document.getElementById('cart-items');
   const totalSpan = document.getElementById('cart-total');
 
   let html = '';
 
-  // Замороженные заявки (не считаются в итоге, нельзя удалить)
   frozenOrders.forEach(order => {
     html += `<div class="cart-item frozen">
       <span>${order.label}</span>
@@ -201,7 +244,7 @@ function freezeOrder(label) {
 }
 
 /* ============================================================
-   МОДАЛЬНОЕ ОКНО — РАЗНЫЕ ФОРМЫ ДЛЯ РАЗНЫХ ОБРАЩЕНИЙ
+   МОДАЛЬНОЕ ОКНО
    ============================================================ */
 function setFieldVisibility({ budget, purpose, delivery }) {
   document.getElementById('budget').closest('.form-group').style.display = budget ? 'block' : 'none';
@@ -273,7 +316,7 @@ document.getElementById('order-modal').addEventListener('click', function(e) {
 });
 
 /* ============================================================
-   ОТПРАВКА ФОРМЫ (AJAX с всплывающим окном успеха)
+   ОТПРАВКА ФОРМЫ
    ============================================================ */
 const orderForm = document.getElementById('order-form');
 if (orderForm) {
@@ -301,9 +344,7 @@ if (orderForm) {
         document.getElementById('cart_items_hidden').value = '';
         successMsg.hidden = false;
 
-        if (orderType.startsWith('Вопрос по сборке:')) {
-          freezeOrder(orderType);
-        } else if (orderType.startsWith('Заказ ПК:')) {
+        if (orderType.startsWith('Вопрос по сборке:') || orderType.startsWith('Заказ ПК:')) {
           freezeOrder(orderType);
         }
 
@@ -324,15 +365,40 @@ if (orderForm) {
   });
 }
 
-// ============ SEO auto meta =============
-/**
- * Если у тебя SPA – верни стандартный meta, когда пользователь закроет карточку сборки:
- */
+/* ============================================================
+   SEO auto meta
+   ============================================================ */
 function resetAutoSEO() {
   document.title = "Сборка ПК в Хабаровске на заказ | Игровые компьютеры — Термопаст.рф";
   const meta = document.querySelector('meta[name="description"]');
   if (meta) meta.setAttribute('content', "Собираем игровые компьютеры под ваш бюджет за 1-3 дня — с гарантией, быстрой доставкой и индивидуальной консультацией. Стресс-тест, честные чеки, поддержка! Рассчитайте стоимость — подберём идеальную сборку для ваших задач.");
 }
-// Можешь вызвать resetAutoSEO() из closeProductDetails или при переходе "назад".
 
+/* ============================================================
+   ГЛОБАЛЬНЫЕ ОБРАБОТЧИКИ (шапка, hero-курсор)
+   ============================================================ */
+function initGlobalInteractions() {
+  // Шапка сжимается при скролле
+  const header = document.querySelector('header');
+  if (header) {
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 50);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // Светящийся курсор в hero
+  const hero = document.querySelector('.hero-utp');
+  if (hero) {
+    hero.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      hero.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+      hero.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    });
+  }
+}
+
+/* ============================================================
+   СТАРТ
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', initGlobalInteractions);
 loadData();
